@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@cypress/instrument-cra": "^1.4.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -12,10 +13,14 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "react-scripts -r @cypress/instrument-cra start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "e2e": "start-test 3000",
+    "pretest": "rm -rf .nyc_output coverage",
+    "test": "cypress run",
+    "posttest": "nyc report",
+    "cy:open": "cypress open",
+    "coverage": "open coverage/lcov-report/index.html"
   },
   "eslintConfig": {
     "extends": [
@@ -34,5 +39,52 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/core": "^7.23.3",
+    "@babel/preset-env": "^7.23.3",
+    "@babel/preset-react": "^7.23.3",
+    "@cypress/code-coverage": "^3.12.9",
+    "@istanbuljs/nyc-config-typescript": "^1.0.2",
+    "babel-jest": "^29.7.0",
+    "babel-plugin-istanbul": "^6.1.1",
+    "cypress": "^13.5.1",
+    "istanbul-lib-coverage": "^3.2.2",
+    "jsdom": "^22.1.0",
+    "nyc": "^15.1.0"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "transform": {
+      "^.+\\.jsx?$": "babel-jest"
+    }
+  },
+  "nyc": {
+    "all": true,
+    "check-coverage": true,
+    "lines": 80,
+    "statements": 80,
+    "functions": 80,
+    "branches": 80,
+    "reporter": [
+      "lcov",
+      "text-summary",
+      "text",
+      "html"
+    ],
+    "extends": "@istanbuljs/nyc-config-typescript",
+    "extension": [
+      ".js"
+    ],
+    "exclude": [
+      "node_modules/**/*",
+      "cypress/**/*.spec.js",
+      "src/setupTestes.js",
+      "src/reportWebVitals.js"
+    ],
+    "include": [
+      "src/**/*.js"
+    ],
+    "report-dir": ".nyc_output"
   }
 }
